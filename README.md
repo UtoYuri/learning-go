@@ -1,13 +1,15 @@
+## dependency
+execute the command and set IDEA to vendor mode then
+```bash
+go mod vendor
+```
+
 ## Road map
-### project layout
-
-### Gin
-https://gin-gonic.com/docs/examples/
-
-### lint
-
-### unit test
-
-### swagger integration
-
-### orm
+- [x] golang syntax
+- [x] [project layout](https://github.com/golang-standards/project-layout)
+- [ ] [gin](https://gin-gonic.com/docs/examples/)
+- [ ] lint
+- [ ] unit test
+- [ ] swagger integration
+- [ ] orm
+- [ ] metrics

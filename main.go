@@ -1,18 +1,10 @@
 package main
 
 import (
-	//"net/http"
-
-	"github.com/gin-gonic/gin"
+	"go-module/web"
 )
 
 func main() {
-	r := gin.Default()
-
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
-	r.Run()
+	server := &web.Server{}
+	server.Run()
 }
