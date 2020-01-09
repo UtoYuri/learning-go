@@ -7,7 +7,7 @@ go mod vendor
 ## Road map
 - [x] golang syntax
 - [x] [project layout](https://github.com/golang-standards/project-layout)
-- [ ] [gin](https://gin-gonic.com/docs/examples/)
+- [x] [gin](https://gin-gonic.com/docs/examples/)
 - [ ] lint
 - [ ] unit test
 - [ ] swagger integration

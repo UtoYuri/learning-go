@@ -5,6 +5,10 @@ import (
 )
 
 func main() {
-	server := &web.Server{}
+	server := &web.Server{
+		Config: &web.Config{
+			Port: 8000,
+		},
+	}
 	server.Run()
 }
