@@ -2,10 +2,14 @@ package web
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"go-module/web/handlers"
 	"net/http"
+	"os"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	"go-module/web/handlers"
 )
 
 type Config struct {
@@ -17,33 +21,32 @@ type Server struct {
 }
 
 func (s *Server) Run() error {
-	var port int
-
 	if s.Config == nil {
-		port = s.Config.Port
+		return fmt.Errorf("no configuration provided")
 	}
 
-	if port == 0 {
-		port = 8000
+	if os.Getenv("DEBUG") != "true" {
+		gin.SetMode(gin.ReleaseMode)
 	}
-
-
-	gin.SetMode(gin.ReleaseMode)
 
 	router := gin.Default()
 
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "pong",
 		})
 	})
 
-	getGroup := router.Group("/get")
-	getGroup.GET("/params", handlers.GetByParams)
-	getGroup.GET("/params/:field_a/:field_b", handlers.GetByUriParams)
+	mediaGroup := router.Group("/media")
+	{
+		mediaGroup.GET("/:id", handlers.GetMedia)
+		mediaGroup.POST("/", handlers.CreateMedia)
+	}
+
 
 	httpServer := &http.Server{
-		Addr:           fmt.Sprintf(":%d", port),
+		Addr:           fmt.Sprintf(":%d", s.Config.Port),
 		Handler:        router,
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
