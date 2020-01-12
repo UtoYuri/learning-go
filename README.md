@@ -36,6 +36,6 @@ go tool cover -html=coverage.out
 ```bash
 # create or update swag docs
 # the docs will be served at /swagger/index.html then
-swag init
+swag init -g cmd/serve.go 
 ```
 

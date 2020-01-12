@@ -14,7 +14,7 @@ const (
 type Media struct {
 	gorm.Model
 	Title string `gorm:"size:255;not null;"`
-	Kind string
+	Kind int
 	Suffix string
 	Size uint64
 	Url string `gorm:"size:1000;not null;"`
@@ -24,7 +24,7 @@ type Media struct {
 type MediaReadonly struct {
 	ID uint `form:"id"`
 	Title string `form:"title"`
-	Kind string `form:"kind"`
+	Kind int `form:"kind"`
 	Suffix string `form:"suffix"`
 	Size uint64 `form:"size"`
 	Url string `form:"url"`
@@ -44,17 +44,24 @@ func GetMedia(id uint) (*Media, error) {
 	return &media, result.Error
 }
 
+func GetMediaBulk() ([]*Media, error) {
+	var medias []*Media
+
+	result := database.DB.Where("status = ?", StatusNormal).Find(&medias)
+
+	return medias, result.Error
+}
+
 func CreateMedia(media *Media) error {
 	result := database.DB.Create(media)
 	return result.Error
 }
 
-func (media *Media) Update(title string) error {
+func (media *Media) Update() error {
 	if media.Status != StatusNormal {
 		return errors.New("media forbidden")
 	}
 
-	media.Title = title
 	result := database.DB.Model(media).Updates(*media)
 	return result.Error
 }
@@ -81,4 +88,24 @@ func (media *Media) Plain() MediaReadonly {
 		CreatedAt: media.CreatedAt.Unix(),
 		UpdatedAt: media.UpdatedAt.Unix(),
 	}
+}
+
+func PlainBulk(medias []*Media) []MediaReadonly {
+	mediasReadonly := make([]MediaReadonly, len(medias))
+
+	for _, media := range medias {
+		mediasReadonly = append(mediasReadonly, MediaReadonly{
+			ID:        media.ID,
+			Title:     media.Title,
+			Kind:      media.Kind,
+			Suffix:    media.Suffix,
+			Size:      media.Size,
+			Url:       media.Url,
+			Status:    media.Status,
+			CreatedAt: media.CreatedAt.Unix(),
+			UpdatedAt: media.UpdatedAt.Unix(),
+		})
+	}
+
+	return mediasReadonly
 }

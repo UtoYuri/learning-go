@@ -31,19 +31,27 @@ func (s *Server) Run() error {
 
 	router := gin.Default()
 
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	router.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
+	// readiness
+	router.GET("/ping", func(c *gin.Context) { c.String(200, "pong") })
 
+	// docs
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	// static serve
+	localResourceDir := os.Getenv("LOCAL_RESOURCE_DIR")
+	if localResourceDir != "" {
+		router.Static("/assets", localResourceDir)
+	}
+
+	// APIs
 	mediaGroup := router.Group("/media")
 	{
 		mediaGroup.GET("/:id", handlers.GetMedia)
+		mediaGroup.GET("/", handlers.GetMediaBulk)
 		mediaGroup.POST("/", handlers.CreateMedia)
+		mediaGroup.PATCH("/:id", handlers.PatchMedia)
+		mediaGroup.PUT("/:id", handlers.UpdateMedia)
 	}
-
 
 	httpServer := &http.Server{
 		Addr:           fmt.Sprintf(":%d", s.Config.Port),

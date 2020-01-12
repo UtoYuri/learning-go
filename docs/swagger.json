@@ -16,6 +16,38 @@
     },
     "paths": {
         "/media": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Media"
+                ],
+                "summary": "Get bulk media",
+                "responses": {
+                    "200": {
+                        "description": "Media infos",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.MediaReadonly"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Wrong params",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.FailedResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Other",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.FailedResponse"
+                        }
+                    }
+                }
+            },
             "post": {
                 "consumes": [
                     "application/json"
@@ -101,6 +133,100 @@
                         }
                     }
                 }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Media"
+                ],
+                "summary": "Update media",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Media ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Media info",
+                        "name": "media",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.UpdateParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Media info",
+                        "schema": {
+                            "$ref": "#/definitions/models.MediaReadonly"
+                        }
+                    },
+                    "400": {
+                        "description": "Wrong params",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.FailedResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Other",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.FailedResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Media"
+                ],
+                "summary": "Patch media",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Media ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Media info",
+                        "name": "media",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.PatchParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Media info",
+                        "schema": {
+                            "$ref": "#/definitions/models.MediaReadonly"
+                        }
+                    },
+                    "400": {
+                        "description": "Wrong params",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.FailedResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Other",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.FailedResponse"
+                        }
+                    }
+                }
             }
         }
     },
@@ -108,16 +234,18 @@
         "handlers.CreateParams": {
             "type": "object",
             "required": [
-                "kind",
                 "title",
                 "url"
             ],
             "properties": {
                 "kind": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "size": {
                     "type": "integer"
+                },
+                "suffix": {
+                    "type": "string"
                 },
                 "title": {
                     "type": "string"
@@ -138,6 +266,32 @@
                 }
             }
         },
+        "handlers.PatchParams": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.UpdateParams": {
+            "type": "object",
+            "required": [
+                "title",
+                "url"
+            ],
+            "properties": {
+                "title": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
         "models.MediaReadonly": {
             "type": "object",
             "properties": {
@@ -148,13 +302,16 @@
                     "type": "integer"
                 },
                 "kind": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "size": {
                     "type": "integer"
                 },
                 "status": {
                     "type": "integer"
+                },
+                "suffix": {
+                    "type": "string"
                 },
                 "title": {
                     "type": "string"

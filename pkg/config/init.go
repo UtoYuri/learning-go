@@ -16,10 +16,12 @@ func Init() error {
 	dbDialect := utils.ValidOrDefault(os.Getenv("DB_DIALECT"), "sqlite3")
 	dbUrl := utils.ValidOrDefault(os.Getenv("DB_URL"), "./database.sqlite")
 
+	// connect db
 	if err := database.Init(&database.Config{ Dialect: dbDialect.(string), Url: dbUrl.(string) }); err != nil {
 		return err
 	}
 
+	// migrate db
 	models.AutoMigrate()
 
 	return nil
